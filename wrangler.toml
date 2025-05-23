@@ -1,0 +1,14 @@
+name = "my-worker" # 这是你的 Worker 名称
+main = "src/index.js"  # 或者你的入口文件
+compatibility_date = "2025-05-18" # 你的兼容性日期
+
+# 可能还有其他配置，比如 [vars], [kv_namespaces] 等
+# 如果你想将Worker绑定到自定义域名的特定路径
+# 方式二：在特定环境下 (更常见)
+ #[env.production]
+
+ #routes = [
+#  { pattern = "prod.yourdomain.com/*", zone_name = "yourdomain.com" }
+# ]
+
+#custom_domain = true
