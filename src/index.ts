@@ -83,17 +83,42 @@ interface Env {
 	  env: Env,         // 环境变量对象类型
 	  ctx: ExecutionContext // 执行上下文类型
 	): Promise<Response> { // 返回 Promise<Response>
-  
+   // 动态设置 Access-Control-Allow-Origin
+   const allowedOrigins = [
+	'https://your-production-app.pages.dev', // 你的生产环境前端域名
+	'http://localhost:3000'                 // 本地开发环境
+	// 如果你有其他前端域名，也添加到这里
+  ];
+  const origin = request.headers.get('Origin');
+  let corsOrigin = '';
+
+  if (origin && allowedOrigins.includes(origin)) {
+	corsOrigin = origin; // 如果请求来源在允许列表中，则使用该来源
+  } else if (!origin && request.method !== 'OPTIONS') {
+	// 对于没有 Origin 头的非预检请求 (例如直接用 curl 或 Postman 测试部署后的 Worker)
+	// 并且你希望允许它们，可以设置一个默认值或保持为空。
+	// 如果是 '*'，则表示允许所有，但通常不推荐用于生产环境的实际数据请求。
+	// 对于本地测试，如果直接 curl，可能没有 Origin 头。
+	// 但从浏览器 localhost:3000 访问时，一定会有 Origin 头。
+  }
+
 	  // CORS 头部设置
 	  const corsHeaders = {
-		'Access-Control-Allow-Origin': 'https://my-cloud-page.pages.dev/', // 生产环境请替换为你的前端域名
+		'Access-Control-Allow-Origin': corsOrigin, // 生产环境请替换为你的前端域名
 		'Access-Control-Allow-Methods': 'POST, OPTIONS',
 		'Access-Control-Allow-Headers': 'Content-Type',
 	  };
   
-	  // 处理 OPTIONS 预检请求 (CORS)
-	  if (request.method === 'OPTIONS') {
-		return new Response(null, { headers: corsHeaders });
+	 // 处理 OPTIONS 预检请求 (CORS)
+	 if (request.method === 'OPTIONS') {
+		// 确保预检请求也返回正确的、动态的 corsOrigin
+		// 并且 Access-Control-Allow-Headers 包含前端实际会发送的头部
+		if (origin && allowedOrigins.includes(origin)) {
+		  return new Response(null, { headers: corsHeaders });
+		} else {
+		  // 如果来源不在允许列表中，可以返回一个没有 CORS 头部的响应或特定错误
+		  return new Response('CORS origin not allowed', { status: 403 });
+		}
 	  }
   
 	  // 只允许 POST 请求
