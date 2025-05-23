@@ -85,7 +85,7 @@ interface Env {
 	): Promise<Response> { // 返回 Promise<Response>
    // 动态设置 Access-Control-Allow-Origin
    const allowedOrigins = [
-	'https://your-production-app.pages.dev', // 你的生产环境前端域名
+	'https://my-cloud-page.pages.dev', // 你的生产环境前端域名
 	'http://localhost:3000'                 // 本地开发环境
 	// 如果你有其他前端域名，也添加到这里
   ];
