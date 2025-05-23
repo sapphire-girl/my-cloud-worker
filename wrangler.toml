@@ -1,4 +1,4 @@
-name = "my-worker" # 这是你的 Worker 名称
+name = "my-cloud-worker" # 这是你的 Worker 名称
 main = "src/index.js"  # 或者你的入口文件
 compatibility_date = "2025-05-18" # 你的兼容性日期
 
